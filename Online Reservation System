@@ -1,0 +1,151 @@
+//controller
+
+package com.prog.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import com.prog.Entity.User;
+import com.prog.service.UserService;
+
+@Controller
+public class UserController {
+	
+	@Autowired
+	private UserService service;
+	@GetMapping("/")
+	public String register(Model model) {
+		User user =new User();
+		model.addAttribute("user", user);
+		
+		return "register";
+	}
+	@PostMapping("/registerUser")
+	public String registerUser(@ModelAttribute("user") User user, Model model){
+		String result="error";
+		System.out.println(user);
+		if(user.getPassword().equals(user.getCpassword())) {
+			try {
+				service.registerUser(user);
+				result= "home";
+			}
+			catch(Exception e) {
+				result= "error";
+			}
+		}
+		model.addAttribute("uname", user.getName());
+		model.addAttribute("name", user.getName());
+		
+
+	
+		return result;
+	}  
+	
+}
+//register page
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <style>
+	body {
+    font-family: Arial, sans-serif;
+    background-image: url('https://media.istockphoto.com/id/925320050/photo/woman-uses-smart-phone-to-book-travel-reservation.webp?b=1&s=170667a&w=0&k=20&c=gJjktajOedZ7SUY593mipEeLzlMaI1fXBsigXGWpRo8=');
+    background-repeat: no-repeat;
+    background-size: cover;
+   opacity: 2;
+}
+.container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+h2 {
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 90%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+button {
+    background-color: #007BFF;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+	</style>
+</head>
+<body>
+    <div class="container">
+        <h2>Reservation Page</h2>
+     
+        <form th:action="@{/registerUser}" th:object="${user}" method="post" action="/register">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" name="source" th:field="*{name}" id="name" required placeholder="Enter name" autocomplete="off">
+            </div>
+             <div class="form-group">
+                <label for="uname">Username</label>
+                <input type="text" name="uname" th:field="*{username}" id="name" required placeholder="Enter your Username">
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email"th:field="*{email}" id="email" required placeholder="Enter your mail">
+            </div>
+            <div class="form-group">
+                <label for="email">Phone Number:</label>
+                <input type="text" th:field="*{phone}"id="email" required placeholder="Enter your phonenumber">
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" th:field="*{password}" id="password"  required placeholder="Enter your password">
+            </div>
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password:</label>
+                <input type="password" th:field="*{cpassword}"id="confirm_password"  required placeholder="Enter your confirm password">
+            </div>
+            <div class="form-group">
+                <label for="confirm_password">Gender:</label>
+                
+                <input type="radio" required name="gender" value="Male">
+             
+                <input type="radio"required name="gender" value="Female">
+            </div>
+            <div class="form-group">
+                <button>Register</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
